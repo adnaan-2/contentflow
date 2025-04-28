@@ -288,10 +288,13 @@
   .forgot-password {
     display: block;
     text-align: right;
-    color: #4285f4;
-    font-size: 14px;
-    margin-top: 8px;
+    margin-bottom: 1rem;
+    color: #007bff;
     text-decoration: none;
+  }
+  
+  .forgot-password:hover {
+    text-decoration: underline;
   }
   
   .auth-button {
@@ -333,7 +336,34 @@
     font-weight: 500;
   }
   
-  /* Footer */
+  .auth-redirect {
+    margin-top: 1rem;
+    text-align: center;
+  }
+  
+  .auth-redirect a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .auth-redirect a:hover {
+    text-decoration: underline;
+  }
+  
+  .auth-redirect {
+    margin-top: 1rem;
+    text-align: center;
+  }
+  
+  .auth-redirect a {
+    color: #007bff;
+    text-decoration: none;
+  }
+  
+  .auth-redirect a:hover {
+    text-decoration: underline;
+  }
+  
   .footer {
     background-color: #333;
     color: #fff;
