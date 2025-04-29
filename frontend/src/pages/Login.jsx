@@ -1,30 +1,34 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 import '../styles/Homepage.css';
 
 const Login = () => {
-  const [loginData, setLoginData] = useState({ email: '', password: '' });
+  const [formData, setFormData] = useState({
+    email: '',
+    password: ''
+  });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
-    setLoginData({ ...loginData, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleLoginSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!loginData.email || !loginData.password) {
-      setError('Please fill in all fields');
-      return;
-    }
+    setLoading(true);
+    setError('');
 
     try {
-      const response = await axios.post('/api/auth/login', loginData);
+      const response = await axios.post('/api/auth/login', formData);
       localStorage.setItem('token', response.data.token);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      setError(err.response?.data?.message || 'An error occurred');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -34,15 +38,15 @@ const Login = () => {
         <div className="auth-container">
           <div className="auth-form login-form">
             <h2>Login</h2>
-            <form onSubmit={handleLoginSubmit}>
+            <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <label htmlFor="loginEmail">Email</label>
                 <input 
                   type="email" 
                   id="loginEmail" 
                   name="email" 
-                  value={loginData.email} 
-                  onChange={handleInputChange} 
+                  value={formData.email} 
+                  onChange={handleChange} 
                   required 
                 />
               </div>
@@ -52,15 +56,17 @@ const Login = () => {
                   type="password" 
                   id="loginPassword" 
                   name="password" 
-                  value={loginData.password} 
-                  onChange={handleInputChange} 
+                  value={formData.password} 
+                  onChange={handleChange} 
                   required 
                 />
               </div>
               <Link to="/forgot-password" className="forgot-password">
                 Forgot password?
               </Link>
-              <button type="submit" className="auth-button">Login</button>
+              <button type="submit" className="auth-button" disabled={loading}>
+                {loading ? 'Loading...' : 'Login'}
+              </button>
               <p className="auth-redirect">
                 Don't have an account? <Link to="/signup">Sign up</Link>
               </p>

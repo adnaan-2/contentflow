@@ -1,11 +1,14 @@
 const express = require('express');
 const router = express.Router();
-const { loginUser, registerUser } = require('../controllers/authController');
+const { register, login } = require('../controllers/authController');
 
-// User Registration
-router.post('/signup', registerUser);
+// Debug middleware for auth routes
+router.use((req, res, next) => {
+  console.log('Auth Route:', req.method, req.path);
+  next();
+});
 
-// User Login
-router.post('/login', loginUser);
+router.post('/register', register);
+router.post('/login', login);
 
 module.exports = router;

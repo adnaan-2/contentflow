@@ -1,41 +1,50 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import axios from 'axios';
 import '../styles/Homepage.css';
 
 const Signup = () => {
-  const [signupData, setSignupData] = useState({ 
-    name: '', 
-    email: '', 
-    password: '', 
-    confirmPassword: '' 
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
   });
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
-    setSignupData({ ...signupData, [e.target.name]: e.target.value });
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSignupSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
 
-    if (!signupData.name || !signupData.email || !signupData.password || !signupData.confirmPassword) {
-      setError('Please fill in all fields');
-      return;
-    }
-
-    if (signupData.password !== signupData.confirmPassword) {
+    if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
+      setLoading(false);
       return;
     }
 
     try {
-      const response = await axios.post('/api/auth/signup', signupData);
-      localStorage.setItem('token', response.data.token);
-      navigate('/dashboard');
+      const response = await axios.post('http://localhost:5000/api/auth/register', {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password
+      });
+      
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+        navigate('/login');
+      }
     } catch (err) {
-      setError(err.response?.data?.message || 'Signup failed');
+      setError(err.response?.data?.message || 'Registration failed');
+      console.error('Registration error:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -45,15 +54,16 @@ const Signup = () => {
         <div className="auth-container">
           <div className="auth-form signup-form">
             <h2>Sign Up</h2>
-            <form onSubmit={handleSignupSubmit}>
+            {error && <div className="error-message">{error}</div>}
+            <form onSubmit={handleSubmit}>
               <div className="form-group">
                 <label htmlFor="signupName">Full Name</label>
                 <input 
                   type="text" 
                   id="signupName" 
                   name="name" 
-                  value={signupData.name} 
-                  onChange={handleInputChange} 
+                  value={formData.name} 
+                  onChange={handleChange} 
                   required 
                 />
               </div>
@@ -63,8 +73,8 @@ const Signup = () => {
                   type="email" 
                   id="signupEmail" 
                   name="email" 
-                  value={signupData.email} 
-                  onChange={handleInputChange} 
+                  value={formData.email} 
+                  onChange={handleChange} 
                   required 
                 />
               </div>
@@ -74,8 +84,8 @@ const Signup = () => {
                   type="password" 
                   id="signupPassword" 
                   name="password" 
-                  value={signupData.password} 
-                  onChange={handleInputChange} 
+                  value={formData.password} 
+                  onChange={handleChange} 
                   required 
                 />
               </div>
@@ -85,18 +95,19 @@ const Signup = () => {
                   type="password" 
                   id="signupConfirmPassword" 
                   name="confirmPassword" 
-                  value={signupData.confirmPassword} 
-                  onChange={handleInputChange} 
+                  value={formData.confirmPassword} 
+                  onChange={handleChange} 
                   required 
                 />
               </div>
-              <button type="submit" className="auth-button">Create Account</button>
+              <button type="submit" className="auth-button" disabled={loading}>
+                {loading ? 'Loading...' : 'Sign Up'}
+              </button>
               <p className="auth-redirect">
                 Already have an account? <Link to="/login">Login</Link>
               </p>
             </form>
           </div>
-          {error && <div className="error-message">{error}</div>}
         </div>
       </div>
     </section>
