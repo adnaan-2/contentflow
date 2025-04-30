@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode'; // Update import syntax
 import '../styles/Navbar.css'; 
 
 const Navbar = () => {
@@ -23,6 +24,23 @@ const Navbar = () => {
     };
   }, []);
 
+  useEffect(() => {
+    // Check if token exists and is valid
+    const token = localStorage.getItem('token');
+    if (token && !isValidToken(token)) {
+      handleLogout();
+    }
+  }, [location.pathname]);
+
+  const isValidToken = (token) => {
+    try {
+      const decoded = jwtDecode(token); // Use imported jwtDecode
+      return decoded.exp > Date.now() / 1000;
+    } catch {
+      return false;
+    }
+  };
+
   const scrollToSection = (sectionId) => {
     // Only scroll if we're on the home page
     if (location.pathname === '/') {
@@ -32,6 +50,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('user');
     navigate('/login');
   };
 

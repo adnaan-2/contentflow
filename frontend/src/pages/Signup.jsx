@@ -23,12 +23,6 @@ const Signup = () => {
     setLoading(true);
     setError('');
 
-    if (formData.password !== formData.confirmPassword) {
-      setError('Passwords do not match');
-      setLoading(false);
-      return;
-    }
-
     try {
       const response = await axios.post('http://localhost:5000/api/auth/register', {
         name: formData.name,
@@ -36,13 +30,17 @@ const Signup = () => {
         password: formData.password
       });
       
-      if (response.data.token) {
-        localStorage.setItem('token', response.data.token);
-        navigate('/login');
+      if (response.data.success) {
+        // Don't store token after registration
+        // Redirect to login with success message
+        navigate('/login', { 
+          state: { 
+            message: 'Registration successful! Please login to continue.' 
+          }
+        });
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Registration failed');
-      console.error('Registration error:', err);
     } finally {
       setLoading(false);
     }

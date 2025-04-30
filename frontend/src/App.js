@@ -1,6 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/navbar';
+import ProtectedRoute from './components/ProtectedRoute';
 
 // Import your sections (components)
 import Home from './pages/Home';
@@ -11,12 +12,6 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Footer from './pages/Footer';
 import Dashboard from './pages/Dashboard';
-
-// Protected Route component
-const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = localStorage.getItem('token'); // Check if user is authenticated
-  return isAuthenticated ? children : <Navigate to="/login" />;
-};
 
 function App() {
   return (
