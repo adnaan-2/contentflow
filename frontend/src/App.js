@@ -1,28 +1,40 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Navbar from './components/navbar';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import LandingNavbar from './components/LandingNavbar';
+import DashboardNavbar from './components/DashboardNavbar';
 import ProtectedRoute from './components/ProtectedRoute';
 
-// Import your sections (components)
-import Home from './pages/Home';
-import About from './pages/About';
-import Features from './pages/Feature';
-import Pricing from './pages/Pricing';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
-import Footer from './pages/Footer';
-import Dashboard from './pages/Dashboard';
+// Import your landing page components
+import Home from '../src/landingpages/Home';
+import About from '../src/landingpages/About';
+import Features from '../src/landingpages/Feature';  
+import Pricing from '../src/landingpages/Pricing';
+import Footer from '../src/landingpages/Footer';   
+import Login from '../src/landingpages/Login';
+import Signup from '../src/landingpages/Signup';
 
-function App() {
+// Import your dashboard pages
+import Dashboard from './dashboardpages/Dashboard';
+import SocialAccounts from './dashboardpages/SocialAccounts';
+import Content from './dashboardpages/Content';
+import Analytics from './dashboardpages/Analytics';
+import Messages from './dashboardpages/Messages';
+import Reports from './dashboardpages/Reports';
+import Settings from './dashboardpages/Settings';
+
+const AppContent = () => {
+  const location = useLocation();
+  const isDashboardRoute = location.pathname.startsWith('/dashboard');
+
   return (
-    <Router>
-      <div>
-        <Navbar />
+    <div>
+      {isDashboardRoute ? <DashboardNavbar /> : <LandingNavbar />}
+      <div className={isDashboardRoute ? 'dashboard-content' : ''}>
         <Routes>
-          {/* Main landing page route */}
+          {/* Landing page routes */}
           <Route path="/" element={
-            <>
-              <div id="home" className="section">
+            <div className="landing-container">
+              <div id="/" className="section">
                 <Home />
               </div>
               <div id="about" className="section">
@@ -35,26 +47,31 @@ function App() {
                 <Pricing />
               </div>
               <Footer />
-            </>
+            </div>
           } />
-
-          {/* Auth routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
-          
-          {/* Protected dashboard route */}
-          <Route 
-            path="/dashboard" 
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            } 
-          />
+
+          {/* Dashboard routes */}
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/dashboard/social-accounts" element={<ProtectedRoute><SocialAccounts /></ProtectedRoute>} />
+          <Route path="/dashboard/content" element={<ProtectedRoute><Content /></ProtectedRoute>} />
+          <Route path="/dashboard/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
+          <Route path="/dashboard/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
+          <Route path="/dashboard/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
+          <Route path="/dashboard/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
         </Routes>
       </div>
+    </div>
+  );
+};
+
+const App = () => {
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
-}
+};
 
 export default App;

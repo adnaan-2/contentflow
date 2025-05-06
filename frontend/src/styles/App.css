@@ -1,0 +1,32 @@
+.landing-container {
+  scroll-behavior: smooth;
+}
+
+.section {
+  min-height: 100vh;
+  padding: 80px 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.dashboard-content {
+  margin-left: 250px;
+  padding: 20px;
+}
+
+#home {
+  background-color: #ffffff;
+}
+
+#about {
+  background-color: #f8f9fa;
+}
+
+#features {
+  background-color: #ffffff;
+}
+
+#pricing {
+  background-color: #f8f9fa;
+}
