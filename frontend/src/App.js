@@ -52,14 +52,20 @@ const AppContent = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
 
-          {/* Dashboard routes */}
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/dashboard/social-accounts" element={<ProtectedRoute><SocialAccounts /></ProtectedRoute>} />
-          <Route path="/dashboard/content" element={<ProtectedRoute><Content /></ProtectedRoute>} />
-          <Route path="/dashboard/analytics" element={<ProtectedRoute><Analytics /></ProtectedRoute>} />
-          <Route path="/dashboard/messages" element={<ProtectedRoute><Messages /></ProtectedRoute>} />
-          <Route path="/dashboard/reports" element={<ProtectedRoute><Reports /></ProtectedRoute>} />
-          <Route path="/dashboard/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
+          {/* Dashboard routes - all use the dashboard-content class */}
+          <Route path="/dashboard/*" element={
+            <ProtectedRoute>
+              <DashboardNavbar />
+              <div className="dashboard-content">
+                <Routes>
+                  <Route path="/" element={<Dashboard />} />
+                  <Route path="/social-accounts" element={<SocialAccounts />} />
+                  <Route path="/content" element={<Content />} />
+                  {/* Other dashboard routes */}
+                </Routes>
+              </div>
+            </ProtectedRoute>
+          } />
         </Routes>
       </div>
     </div>

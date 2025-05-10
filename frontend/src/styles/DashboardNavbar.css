@@ -246,14 +246,15 @@
   font-weight: 500;
 }
 
-/* Show profile menu on hover */
-.profile-dropdown:hover .profile-menu {
+/* Add this class-based rule instead */
+.profile-menu.active {
   display: block;
   opacity: 1;
   transform: translateX(0);
   pointer-events: all;
 }
 
+/* Adjust the profile-menu default state */
 .profile-menu {
   position: fixed;
   top: 180px;

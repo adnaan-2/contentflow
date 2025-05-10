@@ -1,0 +1,74 @@
+/* Dashboard Layout Styles */
+.dashboard-content {
+  margin-left: 130px; /* Same width as navbar */
+  min-height: 100vh;
+  padding: 1.5rem;
+  background-color: var(--background-color, #F3F4F6);
+  transition: margin-left 0.3s ease;
+}
+
+/* Dashboard page container */
+.dashboard-page {
+  width: 100%;
+  margin: 0 auto;
+  max-width: 1600px;
+  padding-bottom: 2rem;
+}
+
+/* Dashboard page header */
+.dashboard-page-header {
+  margin-bottom: 2rem;
+}
+
+.dashboard-page-header h1 {
+  font-size: 1.875rem;
+  font-weight: 600;
+  color: var(--text-color, #374151);
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-page-header p {
+  color: var(--primary-color, #6B7280);
+  font-size: 1rem;
+}
+
+/* Dashboard card styling */
+.dashboard-card {
+  background-color: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Dashboard grid layout */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .dashboard-content {
+    margin-left: 80px; /* Match the collapsed navbar width */
+    padding: 1rem;
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* For extremely small screens */
+@media (max-width: 480px) {
+  .dashboard-content {
+    margin-left: 0;
+    padding: 1rem 0.5rem;
+  }
+  
+  /* Add a top margin to account for a potential mobile header */
+  .dashboard-page {
+    margin-top: 60px;
+  }
+}

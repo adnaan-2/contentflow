@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   FaHome, FaLink, FaCalendarAlt, FaUpload, FaAd, FaChartBar, 
   FaPlus, FaBell, FaUserCircle, FaCog, FaQuestionCircle, 
-  FaHistory, FaMobile, FaSignOutAlt 
+  FaHistory, FaMobile, FaSignOutAlt, FaCreditCard 
 } from 'react-icons/fa';
 import '../styles/DashboardNavbar.css';
 
@@ -12,12 +12,49 @@ const DashboardNavbar = () => {
   const location = useLocation();
   const user = JSON.parse(localStorage.getItem('user'));
   const notifications = 3; // Static notification count
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const [profileMenuOpen, setProfileMenuOpen] = useState(false);
+  const profileRef = useRef(null);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     navigate('/');
+  };
+
+  // Toggle profile menu
+  const toggleProfileMenu = (e) => {
+    e.stopPropagation(); // Prevent event from bubbling up
+    setProfileMenuOpen(!profileMenuOpen);
+  };
+
+  // Close profile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (profileRef.current && !profileRef.current.contains(event.target)) {
+        setProfileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  // Add a function to handle menu item clicks
+  const handleMenuItemClick = (action) => {
+    if (action === 'profile') {
+      navigate('/dashboard/profile');
+    } else if (action === 'settings') {
+      navigate('/dashboard/settings');
+    } else if (action === 'subscription') {
+      navigate('/dashboard/subscription');
+    } else if (action === 'logout') {
+      handleLogout();
+    }
+
+    // Close the menu after action
+    setProfileMenuOpen(false);
   };
 
   return (
@@ -80,41 +117,40 @@ const DashboardNavbar = () => {
               <FaBell className="nav-icon" />
               {notifications > 0 && <span className="notification-badge">{notifications}</span>}
             </button>
-            <div className="profile-dropdown">
+            <div className="profile-dropdown" ref={profileRef}>
               <button 
                 className="profile-btn" 
-                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                onClick={toggleProfileMenu}
+                aria-expanded={profileMenuOpen}
               >
                 <FaUserCircle className="nav-icon" />
               </button>
-              {showProfileMenu && (
-                <div className="profile-menu">
-                  <div className="profile-header">
-                    <img src={user?.avatar || '/default-avatar.png'} alt="Profile" />
-                    <div className="profile-info">
-                      <h4>{user?.name}</h4>
-                      <p>{user?.email}</p>
-                    </div>
-                  </div>
-                  <div className="menu-items">
-                    <button onClick={() => navigate('/dashboard/settings')}>
-                      <FaCog /> Settings
-                    </button>
-                    <button onClick={() => navigate('/dashboard/help')}>
-                      <FaQuestionCircle /> Help and resources
-                    </button>
-                    <button onClick={() => navigate('/dashboard/history')}>
-                      <FaHistory /> Purchase history
-                    </button>
-                    <button onClick={() => navigate('/dashboard/apps')}>
-                      <FaMobile /> Get the Apps
-                    </button>
-                    <button onClick={handleLogout} className="logout-btn">
-                      <FaSignOutAlt /> Log out
-                    </button>
+              <div className={`profile-menu ${profileMenuOpen ? 'active' : ''}`}>
+                <div className="profile-header">
+                  <img src={user?.avatar || '/default-avatar.png'} alt="Profile" />
+                  <div className="profile-info">
+                    <h4>{user?.name}</h4>
+                    <p>{user?.email}</p>
                   </div>
                 </div>
-              )}
+                <div className="menu-items">
+                  <button onClick={() => handleMenuItemClick('profile')}>
+                    <FaUserCircle /> My Profile
+                  </button>
+                  <button onClick={() => handleMenuItemClick('settings')}>
+                    <FaCog /> Settings
+                  </button>
+                  <button onClick={() => handleMenuItemClick('subscription')}>
+                    <FaCreditCard /> Subscription
+                  </button>
+                  <button 
+                    className="logout-btn" 
+                    onClick={() => handleMenuItemClick('logout')}
+                  >
+                    <FaSignOutAlt /> Log out
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
