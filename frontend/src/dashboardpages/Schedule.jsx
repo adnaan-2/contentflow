@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Calendar, dateFnsLocalizer } from 'react-big-calendar';
+import { Calendar, dateFnsLocalizer, Views } from 'react-big-calendar';
 import format from 'date-fns/format';
 import parse from 'date-fns/parse';
 import startOfWeek from 'date-fns/startOfWeek';
@@ -22,6 +22,27 @@ const localizer = dateFnsLocalizer({
   locales
 });
 
+// Custom event components with platform-specific styling
+const EventComponent = ({ event }) => {
+  // Determine color based on platforms
+  const getPlatformColor = () => {
+    if (event.platforms) {
+      if (event.platforms.includes('facebook')) return 'facebook-event';
+      if (event.platforms.includes('instagram')) return 'instagram-event';
+      if (event.platforms.includes('twitter')) return 'twitter-event';
+      if (event.platforms.includes('linkedin')) return 'linkedin-event';
+    }
+    return '';
+  };
+
+  return (
+    <div className={`custom-event ${getPlatformColor()}`}>
+      <strong>{event.title}</strong>
+      {event.caption && <p className="event-caption">{event.caption.substring(0, 30)}...</p>}
+    </div>
+  );
+};
+
 const Schedule = () => {
   const [events, setEvents] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -39,6 +60,77 @@ const Schedule = () => {
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [calendarView, setCalendarView] = useState(Views.MONTH);
+
+  // Custom toolbar component for Calendar
+  const CustomToolbar = (toolbar) => {
+    const goToBack = () => {
+      toolbar.date.setMonth(toolbar.date.getMonth() - 1);
+      toolbar.onNavigate('prev');
+    };
+
+    const goToNext = () => {
+      toolbar.date.setMonth(toolbar.date.getMonth() + 1);
+      toolbar.onNavigate('next');
+    };
+
+    const goToCurrent = () => {
+      toolbar.onNavigate('TODAY');
+    };
+
+    const changeView = (view) => {
+      toolbar.onView(view);
+      setCalendarView(view);
+    };
+
+    return (
+      <div className="calendar-toolbar">
+        <div className="calendar-toolbar-nav">
+          <button onClick={goToBack} className="calendar-nav-btn">
+            &lt;
+          </button>
+          <h3 className="calendar-toolbar-label">
+            {format(toolbar.date, 'MMMM yyyy')}
+          </h3>
+          <button onClick={goToNext} className="calendar-nav-btn">
+            &gt;
+          </button>
+        </div>
+        <button 
+          onClick={goToCurrent} 
+          className="calendar-today-btn"
+        >
+          Today
+        </button>
+        <div className="calendar-view-buttons">
+          <button 
+            onClick={() => changeView(Views.MONTH)} 
+            className={`calendar-view-btn ${calendarView === Views.MONTH ? 'active' : ''}`}
+          >
+            Month
+          </button>
+          <button 
+            onClick={() => changeView(Views.WEEK)} 
+            className={`calendar-view-btn ${calendarView === Views.WEEK ? 'active' : ''}`}
+          >
+            Week
+          </button>
+          <button 
+            onClick={() => changeView(Views.DAY)} 
+            className={`calendar-view-btn ${calendarView === Views.DAY ? 'active' : ''}`}
+          >
+            Day
+          </button>
+          <button 
+            onClick={() => changeView(Views.AGENDA)} 
+            className={`calendar-view-btn ${calendarView === Views.AGENDA ? 'active' : ''}`}
+          >
+            Agenda
+          </button>
+        </div>
+      </div>
+    );
+  };
 
   // Fetch existing scheduled posts
   useEffect(() => {
@@ -54,13 +146,14 @@ const Schedule = () => {
           ...event,
           start: new Date(event.scheduledDateTime),
           end: addHours(new Date(event.scheduledDateTime), 1),
-          title: `Post to ${event.platforms.join(', ')}`
+          title: `Post to ${event.platforms.join(', ')}`,
+          platforms: event.platforms,
+          caption: event.caption
         }));
         setEvents(formattedEvents);
       }
     } catch (err) {
       console.error('Error fetching scheduled posts:', err);
-      // Just log the error, don't show an error message to user
     }
   };
 
@@ -137,7 +230,8 @@ const Schedule = () => {
           start: scheduledDateTime,
           end: addHours(scheduledDateTime, 1),
           mediaUrl: selectedMedia.url,
-          platforms
+          platforms,
+          caption: postText
         };
         
         setEvents([...events, newEvent]);
@@ -183,8 +277,12 @@ const Schedule = () => {
   return (
     <div className="schedule-container">
       <div className="schedule-header">
-        <h1><FaCalendarAlt /> Content Schedule</h1>
-        <p>Plan and schedule your content across multiple platforms</p>
+        <h1>
+          <FaCalendarAlt className="header-icon" /> Content Schedule
+        </h1>
+        <p>
+          Plan and schedule your content across multiple platforms
+        </p>
       </div>
 
       <div className="calendar-container">
@@ -196,7 +294,29 @@ const Schedule = () => {
           style={{ height: 600 }}
           selectable
           onSelectSlot={handleDateSelect}
-          views={['month', 'week', 'day']}
+          views={[Views.MONTH, Views.WEEK, Views.DAY, Views.AGENDA]}
+          defaultView={Views.MONTH}
+          view={calendarView}
+          components={{
+            toolbar: CustomToolbar,
+            event: EventComponent
+          }}
+          eventPropGetter={(event) => {
+            let style = {
+              backgroundColor: '#4299e1'
+            };
+            
+            if (event.platforms) {
+              if (event.platforms.includes('facebook')) style.backgroundColor = '#3b5998';
+              else if (event.platforms.includes('instagram')) style.backgroundColor = '#e1306c';
+              else if (event.platforms.includes('twitter')) style.backgroundColor = '#1da1f2';
+              else if (event.platforms.includes('linkedin')) style.backgroundColor = '#0077b5';
+            }
+            
+            return { style };
+          }}
+          popup
+          tooltipAccessor={event => `${event.title}\n${event.caption || ''}`}
         />
       </div>
 
@@ -206,14 +326,26 @@ const Schedule = () => {
           <div className="schedule-modal">
             <div className="modal-header">
               <h2>Schedule New Post</h2>
-              <button className="close-btn" onClick={() => setShowModal(false)}>
+              <button 
+                className="close-btn" 
+                onClick={() => setShowModal(false)}
+              >
                 <FaTimes />
               </button>
             </div>
 
             <div className="modal-body">
-              {error && <div className="error-message">{error}</div>}
-              {success && <div className="success-message">{success}</div>}
+              {error && (
+                <div className="error-message">
+                  {error}
+                </div>
+              )}
+              
+              {success && (
+                <div className="success-message">
+                  {success}
+                </div>
+              )}
 
               <div className="form-group">
                 <label>Date & Time</label>
@@ -236,7 +368,10 @@ const Schedule = () => {
               <div className="form-group">
                 <label>Select Media</label>
                 {isLoading ? (
-                  <div className="loading-media">Loading media...</div>
+                  <div className="loading-media">
+                    <div className="spinner"></div>
+                    Loading media...
+                  </div>
                 ) : mediaFiles.length === 0 ? (
                   <div className="no-media">
                     No media found. Please upload some images first.

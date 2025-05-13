@@ -266,7 +266,7 @@
   right: 0; /* Align to the right edge of the dropdown container */
   left: 10px; /* Override the left property */
   width: 300px;
-  background: white;
+  background: #4285f4;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   padding: 1rem;
