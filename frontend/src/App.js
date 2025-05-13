@@ -23,7 +23,7 @@ import Notification from './dashboardpages/Notification';
 import Settings from './dashboardpages/Settings';
 import Profile from './dashboardpages/Profile';
 import Subscription from './dashboardpages/Subscription';
-
+import Schedule from './dashboardpages/Schedule';
 const AppContent = () => {
   const location = useLocation();
   const isDashboardRoute = location.pathname.startsWith('/dashboard');
@@ -61,8 +61,9 @@ const AppContent = () => {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/social-accounts" element={<SocialAccounts />} />
-                
+                <Route path="/schedule" element={<Schedule />} />
                 <Route path="/analytics" element={<Analytics />} />
+
                 <Route path="/notification" element={<Notification />} />
                 <Route path="/transfer-media" element={<TransferMedia />} />
                 <Route path="/settings" element={<Settings />} />

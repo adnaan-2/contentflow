@@ -70,6 +70,10 @@ app.use('/api/profile', require('./routes/profileRoutes'));
 const mediaRoutes = require('./routes/mediaRoutes');
 app.use('/api/media', mediaRoutes);
 
+// Add this to your server.js file where you define other routes
+const scheduleRoutes = require('./routes/scheduleRoutes');
+app.use('/api/schedule', scheduleRoutes);
+
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
   // Set static folder
