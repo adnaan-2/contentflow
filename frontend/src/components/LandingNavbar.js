@@ -5,6 +5,8 @@ import '../styles/Navbar.css';
 const LandingNavbar = () => {
   const [isSticky, setIsSticky] = useState(false);
   const navigate = useNavigate();
+  const user = JSON.parse(localStorage.getItem('user'));
+  const apiBaseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
 
   useEffect(() => {
     const handleScroll = () => {
@@ -31,6 +33,13 @@ const LandingNavbar = () => {
         block: 'start'
       });
     }
+  };
+
+  const getProfileImageUrl = () => {
+    if (user && user.profilePicture) {
+      return `${apiBaseUrl}/uploads/${user.profilePicture}`;
+    }
+    return `${process.env.PUBLIC_URL}/images/default-avatar.png`;
   };
 
   return (
@@ -72,8 +81,22 @@ const LandingNavbar = () => {
           </button>
         </li>
         {localStorage.getItem('token') ? (
-          <li className="auth-links">
-            <button onClick={handleLogout} className="logout-btn">Logout</button>
+          <li className="auth-links user-profile">
+            <div className="user-info">
+              <img 
+                src={getProfileImageUrl()} 
+                alt="Profile" 
+                className="profile-avatar" 
+              />
+              <div className="user-dropdown">
+                <p>{user?.name || 'User'}</p>
+                <div className="dropdown-content">
+                  <Link to="/dashboard">Dashboard</Link>
+                  <Link to="/dashboard/profile">My Profile</Link>
+                  <button onClick={handleLogout}>Logout</button>
+                </div>
+              </div>
+            </div>
           </li>
         ) : (
           <li className="auth-links">

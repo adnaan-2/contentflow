@@ -37,7 +37,7 @@ const Login = () => {
     setSuccessMessage(''); // Clear any existing success message
 
     try {
-      const response = await api.post('/auth/login', formData);
+      const response = await api.post('/api/auth/login', formData);
       
       if (response.data.success) {
         localStorage.setItem('token', response.data.token);

@@ -28,14 +28,17 @@
 .sidebar-header {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  margin-bottom: 1rem;
   padding: 0.5rem;
 }
-
+.sidebar-header h2 {
+  color: rgb(20, 20, 155);
+  font-weight: 700;
+  font-size: 1.7rem;
+}
 .dashboard-logo {
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 50px;
 }
 
 .user-info {
@@ -146,14 +149,14 @@
   margin-top: auto;
   padding-top: 1rem;  /* Reduced from 2rem to 1rem */
   border-top: 1px solid var(--border-color);
+  position: relative; /* Add this */
+  z-index: 99999; /* Add this */
 }
 
 .footer-actions {
   display: flex;
   align-items: center;
   justify-content: flex-end; /* Align items to the right */
-  padding: 0.5rem;
-  gap: 1rem;
 }
 
 .notification-btn,
@@ -235,6 +238,7 @@
 
 .profile-dropdown {
   position: relative;
+  z-index: 99999; /* Match z-index with the menu */
 }
 
 .profile-btn {
@@ -248,30 +252,32 @@
 
 /* Add this class-based rule instead */
 .profile-menu.active {
-  display: block;
-  opacity: 1;
-  transform: translateX(0);
-  pointer-events: all;
+  display: block !important; /* Force display */
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  pointer-events: all !important;
+  visibility: visible !important;
 }
 
 /* Adjust the profile-menu default state */
 .profile-menu {
-  position: fixed;
-  top: 180px;
-  left: 280px; /* Width of the navbar */
+  position: absolute; /* Change from fixed to absolute */
+  top: -330px; /* Position it above the profile button */
+  right: 0; /* Align to the right edge of the dropdown container */
+  left: 10px; /* Override the left property */
   width: 300px;
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   padding: 1rem;
-  margin: 1rem;
+  margin: 0; /* Remove margin */
   border: 1px solid var(--border-color);
   display: none;
   opacity: 0;
-  transform: translateX(-10px);
+  transform: translateY(10px); /* Change from translateX to translateY */
   transition: all 0.3s ease;
   pointer-events: none;
-  z-index: 1000;
+  z-index: 99999; /* Use a very high z-index to ensure it's above everything */
 }
 
 .profile-header {
@@ -284,8 +290,8 @@
 }
 
 .profile-header img {
-  width: 48px;
-  height: 48px;
+  width: 70px;
+  height: 58px;
   border-radius: 50%;
   object-fit: cover;
 }
@@ -348,4 +354,34 @@
 .light,
 .theme-toggle {
   display: none;
+}
+/* Add these styles to your DashboardNavbar.css file */
+
+.profile-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.profile-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-header img {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* Adjust for mobile */
+@media (max-width: 768px) {
+  .profile-menu {
+    right: -250px; /* Position to the right of the collapsed sidebar */
+    top: -130px;
+    left: auto; /* Make sure left is auto */
+  }
 }

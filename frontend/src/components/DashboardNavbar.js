@@ -10,10 +10,18 @@ import '../styles/DashboardNavbar.css';
 const DashboardNavbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const user = JSON.parse(localStorage.getItem('user'));
+  const [user, setUser] = useState(JSON.parse(localStorage.getItem('user')));
   const notifications = 3; // Static notification count
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const profileRef = useRef(null);
+
+  // Simple effect to get user data once
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem('user'));
+    if (userData) {
+      setUser(userData);
+    }
+  }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -105,7 +113,7 @@ const DashboardNavbar = () => {
         </ul>
 
         <div className="action-buttons">
-          <button className="upload-btn" onClick={() => navigate('/dashboard/transfer')}>
+          <button className="upload-btn" onClick={() => navigate('/dashboard/transfer-media')}>
             <FaPlus className="nav-icon" />
             <span>Transfer Media</span>
           </button>
@@ -127,10 +135,10 @@ const DashboardNavbar = () => {
               </button>
               <div className={`profile-menu ${profileMenuOpen ? 'active' : ''}`}>
                 <div className="profile-header">
-                  <img src={user?.avatar || '/default-avatar.png'} alt="Profile" />
+                  <FaUserCircle className="profile-icon" />
                   <div className="profile-info">
-                    <h4>{user?.name}</h4>
-                    <p>{user?.email}</p>
+                    <h4>{user?.name || 'User'}</h4>
+                    <p>{user?.email || 'user@example.com'}</p>
                   </div>
                 </div>
                 <div className="menu-items">

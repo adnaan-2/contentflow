@@ -6,13 +6,18 @@ const morgan = require('morgan');
 const connectDB = require('./config/db');
 const path = require('path');
 const authRoutes = require('./routes/authRoutes');
-const socialAccountsRoutes = require('./routes/socialAccountsRoutes'); // Add this line
+const fs = require('fs');
+const uploadDir = path.join(__dirname, 'uploads/profile');
 
-// Load env vars
 dotenv.config();
 
 // Connect to database
 connectDB();
+
+// Create uploads directory if it doesn't exist
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
 
 // Initialize express
 const app = express();
@@ -36,6 +41,12 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Add near your other middleware setup
+
+// Increase payload size limits
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
 // Logging middleware
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
@@ -49,9 +60,15 @@ app.use((req, res, next) => {
   next();
 });
 
+// Make uploads directory accessible
+
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/social-accounts', socialAccountsRoutes); // Add this line
+app.use('/api/profile', require('./routes/profileRoutes'));
+
+// Add this with your other routes
+const mediaRoutes = require('./routes/mediaRoutes');
+app.use('/api/media', mediaRoutes);
 
 // Serve static assets in production
 if (process.env.NODE_ENV === 'production') {
