@@ -262,15 +262,16 @@
 /* Adjust the profile-menu default state */
 .profile-menu {
   position: absolute; /* Change from fixed to absolute */
-  top: -330px; /* Position it above the profile button */
-  right: 0; /* Align to the right edge of the dropdown container */
-  left: 10px; /* Override the left property */
-  width: 300px;
-  background: #4285f4;
+  top: -347px; /* Position it above the profile button */
+  right: -26px; /* Align to the right edge of the dropdown container */
+   /* Override the left property */
+  width: 280px;
+  background: white;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
   padding: 1rem;
-  margin: 0; /* Remove margin */
+  font-size: 60px;
+  margin: 0;
   border: 1px solid var(--border-color);
   display: none;
   opacity: 0;
@@ -312,7 +313,7 @@
 .menu-items {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+;
 }
 
 .menu-items button {
